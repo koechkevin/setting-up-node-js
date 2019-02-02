@@ -16,11 +16,21 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.STRING
       },
       gender: {
-        allowNull: true,
-        type: DataTypes.STRING
+        allowNull: false,
+        type: DataTypes.ENUM('male', 'female')
+      },
+      password: {
+        allowNull: false,
+        type: DataTypes.TEXT
       }
     },
     {}
   );
+  User.prototype.toJSON =  function () {
+    const values = Object.assign({}, this.get());
+
+    delete values.password;
+    return values;
+  };
   return User;
 };

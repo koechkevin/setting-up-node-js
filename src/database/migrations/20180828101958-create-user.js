@@ -20,8 +20,8 @@ module.exports = {
       type: Sequelize.STRING,
     },
     gender: {
-      allowNull: true,
-      type: Sequelize.STRING,
+      allowNull: false,
+      type: Sequelize.ENUM('male', 'female')
     },
     createdAt: {
       allowNull: false,
