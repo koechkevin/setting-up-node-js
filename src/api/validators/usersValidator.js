@@ -31,7 +31,20 @@ class UsersValidator {
       .ltrim()
       .notEmpty();
     req.checkBody('gender', 'male/female')
-      .custom(gender => gender === 'male' || gender === 'female')
+      .custom(gender => gender === 'male' || gender === 'female');
+    const errors = req.validationErrors();
+    if (errors) {
+      return res.status(422).json({
+        errors
+      })
+    }
+    next()
+  }
+
+  static roleValidator(req, res, next) {
+    req.checkBody('role', 'role should either be Super Administrator, Administrator or User')
+      .custom(role => role === 'Super Administrator' || role === 'Administrator' || role === 'User')
+      .notEmpty();
     const errors = req.validationErrors();
     if (errors) {
       return res.status(422).json({

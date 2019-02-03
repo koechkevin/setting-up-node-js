@@ -22,17 +22,15 @@ export default (sequelize, DataTypes) => {
       password: {
         allowNull: false,
         type: DataTypes.TEXT
+      },
+      role: {
+        type: DataTypes.ENUM('Super Administrator', 'Administrator', 'User'),
+        allowNull: false,
+        defaultValue: 'User'
       }
     },
     {}
   );
-  User.associate = (models) => {
-    User.belongsToMany(models.Roles, {
-      foreignKey: 'userId',
-      as: 'roles',
-      through: 'name'
-    });
-  }
   User.prototype.toJSON =  function () {
     const values = Object.assign({}, this.get());
 

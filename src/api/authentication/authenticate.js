@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
+import jwtDecode from 'jwt-decode';
+import models from "../../database/models";
 
-const authenticate = (req, res, next) => {
+const authenticate = async (req, res, next) => {
   const {headers: {authorization}} = req;
   if (!authorization) {
     return res.status(401)
@@ -20,11 +22,32 @@ const authenticate = (req, res, next) => {
   );
 };
 
-const checkRole = (roles) => {
+const allowRoles = (roles) => {
+  return async (req, res, next) => {
+    const {headers: {authorization}} = req;
+    const decode = jwtDecode(authorization);
+    const role = await checkRole(decode);
+    if (!role.includes(roles)) {
+      return res.status(403).json({
+        error: 'You do not have access to this endpoint'
+      })
+    }
+    return next()
+  }
+};
 
+const checkRole = async ({email}) => {
+  const user  = await models.User.findOne({
+    where: {
+      email
+    }
+  });
+  const {role} = user;
+  return role;
 };
 const Authenticate = {
-  authenticate
+  authenticate,
+  allowRoles,
 };
 
 export default Authenticate;
