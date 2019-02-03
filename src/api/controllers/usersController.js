@@ -2,7 +2,7 @@ import models from "../../database/models";
 import crypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const SECRET_KEY = 'this is a secret key';
+const SECRET_KEY = process.env.SECRET_KEY;
 
 class UsersController {
   static async createUser (req, res){

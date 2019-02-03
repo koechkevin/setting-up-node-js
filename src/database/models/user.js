@@ -26,6 +26,13 @@ export default (sequelize, DataTypes) => {
     },
     {}
   );
+  User.associate = (models) => {
+    User.belongsToMany(models.Roles, {
+      foreignKey: 'userId',
+      as: 'roles',
+      through: 'name'
+    });
+  }
   User.prototype.toJSON =  function () {
     const values = Object.assign({}, this.get());
 
