@@ -1,6 +1,7 @@
 import models from "../../database/models";
 import crypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import fs from "fs";
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -16,6 +17,10 @@ const createUser = async (req, res) => {
       gender,
     };
     const user = await models.User.create(userData);
+    const logger = fs.createWriteStream('log.txt', {
+      flags: 'a'
+    });
+    logger.write(`\r\n ${user.email} created at ${new Date()}`);
     res.status(201).json({
       message: 'created successfully',
       user
@@ -66,6 +71,10 @@ const  getAllUsers = async (req, res) => {
         }, SECRET_KEY, { expiresIn: '12h'}
           )
       });
+      const logger = fs.createWriteStream('log.txt', {
+        flags: 'a'
+      });
+      logger.write(`\r\n ${email} logged in at ${new Date()}`);
     }
     else {
       res.status(401).json({
