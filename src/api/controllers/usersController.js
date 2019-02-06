@@ -1,13 +1,17 @@
-import models from "../../database/models";
 import crypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import fs from "fs";
+import fs from 'fs';
+import models from '../../database/models';
 
-const SECRET_KEY = process.env.SECRET_KEY;
+const { SECRET_KEY } = process.env;
 
 const createUser = async (req, res) => {
   try {
-    const {body: {fullName, email, occupation, gender, password }} = req;
+    const {
+      body: {
+        fullName, email, occupation, gender, password
+      }
+    } = req;
     const hashedPassword = await crypt.hashSync(password, crypt.genSaltSync(10));
     const userData = {
       fullName,
@@ -24,16 +28,16 @@ const createUser = async (req, res) => {
     res.status(201).json({
       message: 'created successfully',
       user
-    })
-  } catch(error) {
+    });
+  } catch (error) {
     res.status(400).json({
       error: error.message
-    })
+    });
   }
 };
 
-const  getAllUsers = async (req, res) => {
-  const { query: {page, search}} = req;
+const getAllUsers = async (req, res) => {
+  const { query: { page, search } } = req;
   const limit = 3;
   const count = await models.User.count();
   const pageCount = Math.ceil(count / limit);
@@ -51,38 +55,36 @@ const  getAllUsers = async (req, res) => {
         currentPage
       }
     },
-    message:'you successfully accessed users endpoint'
+    message: 'you successfully accessed users endpoint'
   });
-  };
+};
 
-  const login = async (req, res) => {
-    const {body: { email, password }} = req;
-    const user = await models.User.findOne({
-      where: {
-        email
-      }
+const login = async (req, res) => {
+  const { body: { email, password } } = req;
+  const user = await models.User.findOne({
+    where: {
+      email
+    }
+  });
+  if (crypt.compareSync(password, user.password)) {
+    res.status(200).json({
+      message: 'success',
+      jwt_token: jwt.sign({
+        email,
+        occupation: user.occupation
+      }, SECRET_KEY, { expiresIn: '12h' })
     });
-    if (crypt.compareSync(password, user['password'])) {
-      res.status(200).json({
-        message: 'success',
-        jwt_token: jwt.sign({
-          email,
-          occupation: user.occupation
-        }, SECRET_KEY, { expiresIn: '12h'}
-          )
-      });
-      const logger = fs.createWriteStream('log.txt', {
-        flags: 'a'
-      });
-      logger.write(`\r\n ${email} logged in at ${new Date()}`);
-    }
-    else {
-      res.status(401).json({
-        message: 'failed',
-        error: 'invalid credentials'
-      });
-    }
-  };
+    const logger = fs.createWriteStream('log.txt', {
+      flags: 'a'
+    });
+    logger.write(`\r\n ${email} logged in at ${new Date()}`);
+  } else {
+    res.status(401).json({
+      message: 'failed',
+      error: 'invalid credentials'
+    });
+  }
+};
 
 const UsersController = { createUser, getAllUsers, login };
 export default UsersController;
