@@ -35,9 +35,9 @@
   "scripts": {
     "build-server": "babel src --out-dir dist -s",
     "clean": "rm -rf dist && mkdir dist",
-    "build": "yarn run clean && yarn run build-server",
+    "build": "NODE_ENV=development  DEBUG=log  source .env && nodemon --exec babel-node src/index.js",
     "serve": "node dist/index.js",
-    "start": "NODE_ENV=production yarn run build && yarn run serve",
+    "start": "NODE_ENV=production yarn run build",
     "dev": "NODE_ENV=development  DEBUG=log  source .env && nodemon --exec babel-node src/index.js",
     "migrate": "source .env && node_modules/.bin/sequelize db:migrate",
     "seed": "node_modules/.bin/sequelize db:seed:all"
