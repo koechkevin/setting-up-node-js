@@ -1,3 +1,4 @@
+// eslint ignore next
 'use strict';
 
 const fs = require('fs');

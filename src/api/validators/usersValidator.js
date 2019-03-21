@@ -1,18 +1,21 @@
-import models from "../../database/models";
+/* eslint-disable no-useless-escape */
+/* eslint-disable max-len */
+import models from '../../database/models';
+
 class UsersValidator {
-  static async validateUser(req, res, next){
-    const {body: { email }} = req;
+  static async validateUser(req, res, next) {
+    const { body: { email } } = req;
     const user = await models.User.findOne({
       where: {
         email
       }
     });
-    if(user) {
+    if (user) {
       return res.status(409).json({
         error: 'User already exists'
       });
     }
-    next()
+    next();
   }
 
   static validateFields(req, res, next) {
@@ -20,7 +23,7 @@ class UsersValidator {
       .notEmpty()
       .ltrim();
     req.checkBody('email', 'provide a valid email')
-      .matches(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i)
+      .matches(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i);
     req.checkBody('occupation', 'required')
       .ltrim()
       .notEmpty();
@@ -36,9 +39,9 @@ class UsersValidator {
     if (errors) {
       return res.status(422).json({
         errors
-      })
+      });
     }
-    next()
+    next();
   }
 
   static roleValidator(req, res, next) {
@@ -49,11 +52,10 @@ class UsersValidator {
     if (errors) {
       return res.status(422).json({
         errors
-      })
+      });
     }
-    next()
+    next();
   }
-
 }
 
 export default UsersValidator;
