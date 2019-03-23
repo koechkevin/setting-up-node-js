@@ -3,9 +3,11 @@ import UsersController from '../controllers/usersController';
 import UsersValidator from '../validators/usersValidator';
 import Authenticate from '../authentication/authenticate';
 import roles from '../controllers/roles';
+import Random from '../controllers/random';
 
 
 const UsersRouter = express.Router();
+const { random } = Random;
 const { changeRole } = roles;
 const { authenticate, allowRoles } = Authenticate;
 const { validateFields, validateUser, roleValidator } = UsersValidator;
@@ -36,4 +38,8 @@ UsersRouter.put(
   changeRole
 );
 
+UsersRouter.post(
+  '/users/random',
+  random
+);
 export default UsersRouter;
